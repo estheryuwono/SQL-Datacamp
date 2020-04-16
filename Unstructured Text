@@ -1,0 +1,16 @@
+**Instructions:**
+Find the most common categories for rows with a description about trash that don't have a trash-related category.
+
+**Code:**
+-- Count rows with each category
+SELECT count(*), category
+  FROM evanston311 
+ WHERE (description ILIKE '%trash%'
+    OR description ILIKE '%garbage%') 
+   AND category NOT LIKE '%Trash%'
+   AND category NOT LIKE '%Garbage%'
+ -- What are you counting?
+ GROUP BY category
+ --- order by most frequent values
+ ORDER BY count(*) DESC
+ LIMIT 10;
