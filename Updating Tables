@@ -1,0 +1,26 @@
+-- Code from previous step
+DROP TABLE IF EXISTS recode;
+CREATE TEMP TABLE recode AS
+  SELECT DISTINCT category, 
+         rtrim(split_part(category, '-', 1)) AS standardized
+  FROM evanston311;
+UPDATE recode SET standardized='Trash Cart' 
+ WHERE standardized LIKE 'Trash%Cart';
+UPDATE recode SET standardized='Snow Removal' 
+ WHERE standardized LIKE 'Snow%Removal%';
+UPDATE recode SET standardized='UNUSED' 
+ WHERE standardized IN ('THIS REQUEST IS INACTIVE...Trash Cart', 
+               '(DO NOT USE) Water Bill',
+               'DO NOT USE Trash', 'NO LONGER IN USE');
+
+-- Select the recoded categories and the count of each
+SELECT standardized, COUNT(*)
+-- From the original table and table with recoded values
+  FROM evanston311 
+       LEFT JOIN recode 
+       -- What column do they have in common?
+       ON evanston311.category=recode.category
+ -- What do you need to group by to count?
+ GROUP BY standardized
+ -- Display the most common val values first
+ ORDER BY count DESC ;
